@@ -88,6 +88,7 @@ int lx, ly;
 
 // dades camara
 Cam cam, walk;
+double modelview_matrix[16];
 
 // pel model del patricio
 Model model;
@@ -367,7 +368,7 @@ void set_cam(void) {
   } else {
     // mode 'walk'
     const double angle = r2d(2.0 * walk.fovy);
-    gluPerspective(angle / walk.zoom, walk.aspect, walk.zNear, walk.zFar);
+    gluPerspective(angle * walk.zoom, walk.aspect, walk.zNear, walk.zFar);
   }
  
   glMatrixMode(GL_MODELVIEW);
@@ -384,6 +385,7 @@ void set_position(void) {
     glRotated(cam.yAng, 0.0, 1.0, 0.0);
     glTranslated(0.0, 0.0, cam.dist);
     glMultMatrixd(m);
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview_matrix);
     cam.xAng = cam.yAng = 0.0;
   } else {
     // mode 'walk'
@@ -420,8 +422,17 @@ void set_position(void) {
     cross(rx, ry, rz, xLook, yLook, zLook, walk.xUp, walk.yUp, walk.zUp);
     
     // normalize(walk.xUp, walk.yUp, walk.zUp);
+    glLoadIdentity();
     gluLookAt(walk.xObs, walk.yObs, walk.zObs, walk.xVrp, walk.yVrp, walk.zVrp, walk.xUp, walk.yUp, walk.zUp);
   }
+}
+
+void inspect_updated(void) {
+  set_cam();
+  if (inspect) {
+    glLoadIdentity();
+    glMultMatrixd(modelview_matrix);
+  } else set_position();
 }
 
 
@@ -434,6 +445,7 @@ void reset_cam(void) {
   glRotated(45.0, 1.0, 0.0, 0.0);
   glRotated(-45.0, 0.0, 1.0, 0.0);
   glTranslated(-cam.xVrp, -cam.yVrp, -cam.zVrp);
+  glGetDoublev(GL_MODELVIEW_MATRIX, modelview_matrix);
   
   glutPostRedisplay();
 }
@@ -630,8 +642,7 @@ void keyHandler(unsigned char key, int x, int y) {
    
   } else if ((do_refresh = key == 'c')) {
     inspect = !inspect;
-    set_cam();
-    set_position();
+    inspect_updated();
     cout << "Mode " << (inspect ? "inspeccio" : "'walk'") << endl;
     
   } else if (!inspect && key == 't') {
@@ -748,7 +759,7 @@ void setGLCallbacks(void) {
 }
 
 // per comprimir amb un tar.gz:
-// tar -zcvf bloc2.tar.gz Makefile main.cc
+// tar -zcvf bloc3.tar.gz *
 int main(int argc, const char *argv[]) {
  
   // inicialitzacions
