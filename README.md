@@ -1,3 +1,5 @@
-Laboratoris IDI d'OpenGL
+# GRAU-IDI (Interacció i Disseny d'Interfícies)
 
-Solucions pels 4 blocs d'OpenGL
+**Laboratoris d'IDI**
+
+Solucions pels 3 primers blocs d'OpenGL
