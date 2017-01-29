@@ -2,4 +2,4 @@
 
 **Laboratoris d'IDI - FIB UPC**
 
-Solucions pels 3 primers blocs d'OpenGL
+Solucions pels 3 primers blocs d'OpenGL 3
